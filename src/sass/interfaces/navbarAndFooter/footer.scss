@@ -1,0 +1,16 @@
+@use "../../variables/variables.scss" as *;
+@use "../../variables/mixins.scss" as *;
+footer {
+    background: $bg-black;
+    .footer__container {
+        max-width: $max-width-1200;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+        >h4 {
+            margin-bottom: 1.5rem;
+            font-size: 1.2rem;
+            font-weight: 800;
+        }
+    }
+}

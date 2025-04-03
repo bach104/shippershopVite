@@ -1,0 +1,89 @@
+@use "../../variables/variables.scss" as *;
+@use "../../variables/mixins.scss" as *;
+@use "../../font/fonts.scss" as *;
+.max-width {
+    max-width: $max-width-1400;
+    margin: auto;
+    margin-top: 5rem;
+    background: $primary-color-gray;
+    margin-bottom: 2rem;
+}
+.container-width{
+    max-width: $max-width-1400;
+    margin:0 auto;
+}
+input[type="checkbox"] {
+    accent-color: black;
+}
+
+.scroll__listX {
+    overflow-x: auto;
+    width: 100%;
+    display: flex;
+    flex-wrap: nowrap;
+}
+.scroll__managerProduct{
+    overflow-y: scroll;
+    max-height:7rem;
+    min-height: 7rem;
+}
+.scroll__viewInformation{
+    overflow-y: scroll;
+    max-height:17rem;
+    text-align: justify;
+    min-height: 17rem;
+}
+.introduce__grid,
+.product__grid {
+    max-width: $max-width-1400;
+    margin: 2rem auto;
+    background: $primary-color-gray;
+}
+.title {
+    font-family:$font-text3;
+    font-weight: 300;
+    line-height: 1.2;
+    text-shadow: 0 0 12px rgba(0, 0, 0, 1);
+}
+.product__list>li:hover {
+    background-color: #949494;
+}
+
+.bg__header {
+    background: #b5b5b5;
+}
+
+.bg__filter {
+    background: #E2E1E1;
+}
+
+.bg__div {
+    background: #c2c0c0;
+}
+.bg__select{
+    background:$bg-cart-selected;
+}
+.product__list>div:nth-child(2),
+.product__list>li {
+    background: $bg-gray;
+}
+
+.scroll__container{
+    overflow-y: scroll;
+    max-height: 500px;
+}
+.font__text {
+    font-family: $font-text3;
+}
+.bank-box,
+.store__title {
+    background: rgba(59, 59, 59, 0.8);
+}
+
+@media screen and (width < 768px) {
+    .cart__wrap {
+        flex-wrap: wrap;
+    }
+}
+
+

@@ -1,0 +1,30 @@
+@use "../variables/variables.scss" as *;
+@mixin container{
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+@mixin click-show-hide {
+    top: 50%;
+    right: 0.5rem;
+    cursor: pointer;
+    transform: translateY(-50%);
+}
+@mixin bg-img{
+    object-fit: cover;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+@mixin frame-width {
+    width: 100%;
+    max-width: $max-width-1400;
+    margin: auto;
+}
+@mixin flexHeader{
+    align-items: center;
+    display: flex;
+    justify-content: center;
+}

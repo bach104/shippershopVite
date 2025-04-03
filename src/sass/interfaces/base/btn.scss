@@ -1,0 +1,51 @@
+@use "../../variables/variables.scss" as*;
+@use "../../font/fonts.scss" as *;
+.btn__seemore {
+    border-radius: 5px;
+    align-items: center;
+    background: $bg-black;
+    cursor: pointer;
+    padding: 0.75rem 1.5rem;
+}
+.btn__add {
+    border-radius: 5px;
+    align-items: center;
+    cursor: pointer;
+}
+
+.btn {
+    background: $bg-black;
+    padding: 0.75rem 1.5rem;
+    outline: none;
+    border: none;
+    font-size: 1rem;
+    color: $white;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn:hover {
+    opacity: 0.9;
+    transform: scale(1.1) translateX(10px);
+}
+
+.btn__seemore:hover,
+.btn__add:hover {
+    transform: scale(1.1);
+}
+
+.hover__btn:hover {
+    box-shadow: inset 0px 0px 8px rgb(112, 94, 94);
+    opacity: 0.9;
+}
+
+.btn__click {
+    background: rgba(0, 0, 0, 0.1);
+}
+.product__hv:hover {
+    transform: scale(1.1);
+}
+.btn__li:hover{
+    background: rgba(0, 0, 0, 0.1);
+}
