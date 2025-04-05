@@ -1,0 +1,18 @@
+@use "../../../font//fonts.scss" as *;
+@use "../../../variables/mixins.scss"as *;
+@use "../../../variables/variables.scss" as*;
+
+.informationAuth{
+    .boxContainer{
+       @include frame-width();
+       >h2{
+          font-family: $font-text3;
+          font-size: $font-title;
+       }
+    }
+    input{
+        outline: none ;
+        border:  1px solid black;
+        border-radius: 6px;
+    }
+}

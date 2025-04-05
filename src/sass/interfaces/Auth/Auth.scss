@@ -1,0 +1,36 @@
+@use "../../variables/mixins.scss" as *;
+@use "../../variables/variables.scss" as *;
+@use "../../font/fonts.scss" as *;
+.Auth{
+    @include container();
+    .boxLog{
+        max-width: 25rem;
+        width: 100%;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 2.9);
+        > h1{
+            font-family: $font-text3;
+            font-size: $font-title;
+            background:$bg-black;
+            color: $white;
+            font-weight: 300;
+        }
+        >form>div{
+            display: flex;
+            flex-direction: column;
+            input{
+                outline: none;
+                border: 1px solid $bg-black;
+            }
+            >nav{
+                border: none;
+                >i{
+                    @include click-show-hide();
+                }
+            }
+        }
+        p>a{
+            color: $text-link;
+            text-decoration: underline;
+        }
+    }
+}
