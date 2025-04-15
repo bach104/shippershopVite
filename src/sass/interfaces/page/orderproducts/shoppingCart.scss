@@ -1,0 +1,48 @@
+@use "../../../variables/variables.scss" as *;
+@use "../../../variables/mixins.scss" as *;
+@use "../../../font/fonts.scss" as *;
+
+.shoppingContainer{
+    max-height: 45rem;
+    min-height: 45rem;
+    min-width: 20rem;
+    overflow-y: scroll;
+    border:2px solid rgba($color: #000000, $alpha: 0.4);
+}
+ .shoppingItems{
+    .shoppingItems__click{
+
+        >button{
+            padding: 8px 16px;
+        }
+    }
+ }
+@media (max-width: 600px){
+    .shoppingContainer{
+        max-height: 25rem;
+        min-height: 25rem;
+        .shoppingItems{
+            height:6rem ;
+            >img{
+                height: 5rem;
+                width: 5rem;
+            }
+            .shoppingItems__click {
+    
+                >button {
+                    padding: 5px 10px;
+                }
+            }
+            .shoppingItems__technology{
+                >h3{
+                    font-size: 1rem;
+                    line-height: 1.2;
+                }
+                >p{
+                    font-size: 0.8rem;
+                    line-height: 1.2;
+                }
+            }
+        }
+    }
+}

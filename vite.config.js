@@ -5,7 +5,7 @@ export default defineConfig({
   content: ["./src/**/*.{js,jsx,ts,tsx}"], 
   plugins: [
     react(),
-    tailwindcss()
+    tailwindcss(),
   ],
   theme: {
     extend: {},

@@ -2,224 +2,202 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useRegisterShipperMutation } from "../redux/shipper/shipperApi";
 import { toast } from "react-toastify";
-
+import { faCheck } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 const Register = () => {
   const navigate = useNavigate();
   const [registerShipper, { isLoading }] = useRegisterShipperMutation();
-  
+
   const [formData, setFormData] = useState({
     username: "",
     email: "",
     password: "",
-    rePassword: ""
-  });
-  
-  const [errors, setErrors] = useState({
-    username: "",
-    email: "",
-    password: "",
-    rePassword: ""
+    rePassword: "",
   });
 
+  const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [showRePassword, setShowRePassword] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+
+  const togglePasswordVisibility = () => setShowPassword(!showPassword);
+  const toggleRePasswordVisibility = () => setShowRePassword(!showRePassword);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [e.target.name]: e.target.value,
     }));
-    // Clear error when user types
-    if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: "" }));
-    }
-  };
-
-  const validateForm = () => {
-    let isValid = true;
-    const newErrors = { username: "", email: "", password: "", rePassword: "" };
-
-    if (!formData.username.trim()) {
-      newErrors.username = "Vui lòng nhập tên đăng nhập";
-      isValid = false;
-    } else if (formData.username.length < 4) {
-      newErrors.username = "Tên đăng nhập phải có ít nhất 4 ký tự";
-      isValid = false;
-    }
-
-    if (!formData.email.trim()) {
-      newErrors.email = "Vui lòng nhập email";
-      isValid = false;
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "Email không hợp lệ";
-      isValid = false;
-    }
-
-    if (!formData.password) {
-      newErrors.password = "Vui lòng nhập mật khẩu";
-      isValid = false;
-    } else if (formData.password.length < 6) {
-      newErrors.password = "Mật khẩu phải có ít nhất 6 ký tự";
-      isValid = false;
-    }
-
-    if (formData.password !== formData.rePassword) {
-      newErrors.rePassword = "Mật khẩu không trùng khớp";
-      isValid = false;
-    }
-
-    setErrors(newErrors);
-    return isValid;
+    setErrors((prev) => ({
+      ...prev,
+      [e.target.name]: "",
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    if (!validateForm()) return;
+    const { username, email, password, rePassword } = formData;
+    const newErrors = {};
+
+    if (!username) newErrors.username = "Vui lòng nhập tên đăng nhập.";
+    if (!email) newErrors.email = "Vui lòng nhập email.";
+    if (!password) newErrors.password = "Vui lòng nhập mật khẩu.";
+    if (!rePassword) newErrors.rePassword = "Vui lòng nhập lại mật khẩu.";
+    if (password && rePassword && password !== rePassword)
+      newErrors.rePassword = "Mật khẩu nhập lại không khớp.";
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
 
     try {
-      const response = await registerShipper({
-        username: formData.username,
-        email: formData.email,
-        password: formData.password
-      }).unwrap();
-
-      if (response.success) {
-        toast.success("Đăng ký shipper thành công! Vui lòng đăng nhập.");
+      await registerShipper({ username, email, password }).unwrap();
+      toast.success("Đăng ký thành công!");
+      setIsSuccess(true);
+      setTimeout(() => {
         navigate("/login");
-      }
-    } catch (error) {
-      if (error.data) {
-        // Handle shipper-specific errors
-        if (error.data.code === 'SHIPPER_USERNAME_EXISTS') {
-          setErrors(prev => ({
-            ...prev,
-            username: "Tên đăng nhập đã được sử dụng bởi shipper khác"
-          }));
-        } else if (error.data.code === 'SHIPPER_EMAIL_EXISTS') {
-          setErrors(prev => ({
-            ...prev,
-            email: "Email đã được sử dụng bởi shipper khác"
-          }));
-        } else {
-          toast.error(error.data.message || "Đăng ký thất bại");
-        }
+      }, 1500);
+    } catch (err) {
+      const message = err?.data?.message || "Đã có lỗi xảy ra.";
+      const code = err?.data?.code;
+
+      if (code === "USERNAME_EXISTS") {
+        setErrors({ username: "Tên đăng nhập đã tồn tại" });
+      } else if (code === "EMAIL_EXISTS") {
+        setErrors({ email: "Email đã tồn tại" });
       } else {
-        toast.error("Lỗi kết nối server. Vui lòng thử lại sau.");
+        toast.error(message);
       }
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-        <h1 className="text-2xl font-bold text-center mb-6 text-black">Đăng ký Shipper</h1>
-        
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Username Field */}
-          <div>
-            <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
-              Tên đăng nhập
-            </label>
+    <div className="Auth">
+      <div className="boxLog shadow-black m-3 pb-3 rounded-md">
+        <h1 className="font-bold px-3 py-2 rounded-t-md">Đăng ký</h1>
+        <form className="p-3 mt-2" onSubmit={handleSubmit}>
+          <div className="form-control mb-3">
+            <label htmlFor="username">Tên đăng nhập:</label>
             <input
+              className="p-2 rounded-md mt-2 w-full"
               type="text"
-              id="username"
               name="username"
+              id="username"
+              placeholder="Tạo tên đăng nhập"
+              autoComplete="username"
               value={formData.username}
               onChange={handleChange}
-              className={`w-full px-3 py-2 border rounded-md ${errors.username ? 'border-red-500' : 'border-gray-300'}`}
-              placeholder="Nhập tên đăng nhập"
             />
-            {errors.username && <p className="mt-1 text-sm text-red-600">{errors.username}</p>}
+            {errors.username && (
+              <p className="text-red-500 text-sm mt-1">{errors.username}</p>
+            )}
           </div>
 
-          {/* Email Field */}
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-              Email
-            </label>
+          <div className="form-control mb-3">
+            <label htmlFor="email">Email:</label>
             <input
+              className="p-2 rounded-md mt-2 w-full"
               type="email"
-              id="email"
               name="email"
+              id="email"
+              placeholder="Nhập email"
+              autoComplete="email"
               value={formData.email}
               onChange={handleChange}
-              className={`w-full px-3 py-2 border rounded-md ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
-              placeholder="Nhập email"
             />
-            {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
+            {errors.email && (
+              <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+            )}
           </div>
 
-          {/* Password Field */}
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-              Mật khẩu
-            </label>
-            <div className="relative">
+          <div className="form-control mb-3">
+            <label htmlFor="password">Tạo mật khẩu:</label>
+            <div className="relative w-full">
               <input
-                type={showPassword ? "text" : "password"}
-                id="password"
+                className="p-2 w-full rounded-md mt-2 pr-10"
                 name="password"
+                id="password"
+                type={showPassword ? "text" : "password"}
+                placeholder="Tạo mật khẩu"
+                autoComplete="new-password"
                 value={formData.password}
                 onChange={handleChange}
-                className={`w-full px-3 py-2 border rounded-md ${errors.password ? 'border-red-500' : 'border-gray-300'}`}
-                placeholder="Nhập mật khẩu"
               />
-              <button
-                type="button"
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? "Ẩn" : "Hiện"}
-              </button>
+              <i
+                className={`fa-regular absolute right-3 top-1/2 -translate-y-1/2 mt-1 cursor-pointer ${
+                  showPassword ? "fa-eye" : "fa-eye-slash"
+                }`}
+                onClick={togglePasswordVisibility}
+              ></i>
             </div>
-            {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password}</p>}
+            {errors.password && (
+              <p className="text-red-500 text-sm mt-1">{errors.password}</p>
+            )}
           </div>
 
-          {/* Confirm Password Field */}
-          <div>
-            <label htmlFor="rePassword" className="block text-sm font-medium text-gray-700 mb-1">
-              Nhập lại mật khẩu
-            </label>
-            <div className="relative">
+          <div className="form-control mb-3">
+            <label htmlFor="rePassword">Nhập lại mật khẩu:</label>
+            <div className="relative w-full">
               <input
-                type={showRePassword ? "text" : "password"}
-                id="rePassword"
+                className="p-2 w-full rounded-md mt-2 pr-10"
                 name="rePassword"
+                id="rePassword"
+                type={showRePassword ? "text" : "password"}
+                placeholder="Nhập lại mật khẩu"
+                autoComplete="new-password"
                 value={formData.rePassword}
                 onChange={handleChange}
-                className={`w-full px-3 py-2 border rounded-md ${errors.rePassword ? 'border-red-500' : 'border-gray-300'}`}
-                placeholder="Nhập lại mật khẩu"
               />
-              <button
-                type="button"
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
-                onClick={() => setShowRePassword(!showRePassword)}
-              >
-                {showRePassword ? "Ẩn" : "Hiện"}
-              </button>
+              <i
+                className={`fa-regular absolute right-3 top-1/2 -translate-y-1/2 mt-1 cursor-pointer ${
+                  showRePassword ? "fa-eye" : "fa-eye-slash"
+                }`}
+                onClick={toggleRePasswordVisibility}
+              ></i>
             </div>
-            {errors.rePassword && <p className="mt-1 text-sm text-red-600">{errors.rePassword}</p>}
+            {errors.rePassword && (
+              <p className="text-red-500 text-sm mt-1">{errors.rePassword}</p>
+            )}
           </div>
 
+          {isSuccess ? (
+            <button
+              type="button"
+              className="bg-black text-white px-3 py-2 rounded-md w-full mt-3"
+              disabled
+            >
+              <FontAwesomeIcon className="mr-2 text-xl font-bold text-green-600" icon={faCheck} />
+              Đăng ký thành công
+            </button>
+          ) : (
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="bg-black text-white px-3 py-2 rounded-md w-full mt-3"
+            >
+              {isLoading ? "Đang đăng ký..." : "Đăng ký"}
+            </button>
+          )}
+
           <button
-            type="submit"
-            disabled={isLoading}
-            className={`w-full bg-black opacity-90 cursor-pointer text-white py-2 px-4 rounded-md hover:opacity-100 transition-colors ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
+            type="button"
+            className="bg-black text-white px-3 py-2 rounded-md w-full mt-3 gap-2 flex items-center justify-center"
           >
-            {isLoading ? "Đang đăng ký..." : "Đăng ký Shipper"}
+            <span>
+              <i className="fa-brands fa-google"></i>
+            </span>
+            Đăng nhập bằng Google
           </button>
         </form>
 
-        <div className="mt-4 text-center">
-          <p className="text-sm text-gray-600">
-            Đã có tài khoản?{' '}
-            <Link to="/login" className="text-blue-600 hover:underline font-medium">
-              Đăng nhập ngay
-            </Link>
-          </p>
-        </div>
+        <p className="p-3">
+          Bạn đã có tài khoản?{" "}
+          <Link className="font-bold" to="/login">
+            Đăng nhập
+          </Link>{" "}
+          để vào shop
+        </p>
       </div>
     </div>
   );

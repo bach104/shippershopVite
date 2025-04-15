@@ -1,4 +1,6 @@
 
 @tailwind utilities;
+
 @import "./sass/index.scss";
 @import "tailwindcss";
+

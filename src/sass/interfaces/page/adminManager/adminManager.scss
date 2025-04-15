@@ -1,0 +1,60 @@
+@use "../../../variables/variables.scss" as *;
+@use "../../../variables/mixins.scss" as *;
+@use "../../../font/fonts.scss" as *;
+.Manager__admin{
+    display:flex;
+    .Manager__item{
+        border:1px solid black;
+        border-radius: 6px;
+        width: 300px;
+        >h2{
+            padding: 16px;
+            width: 100%;
+            background: $bg-black;
+            color:$text-white;
+            opacity:0.8;
+        }
+        ul {
+            > li {
+                border-bottom: 1px solid black;
+                &:last-child {
+                    border-bottom: none;
+                }
+                > :hover {
+                    background: rgba(228, 228, 228, 0.7);
+                }
+            }
+        }
+    }
+    .Manager__display {
+        border-radius: 5px;
+        &--Title{
+                width: 100%;
+                background: $bg-black;
+                color: $text-white;
+                opacity: 0.8;
+                border-radius: 5px 5px 0 0;
+                >input{
+                    outline: none;
+                    border:2px solid gray
+                }
+        }
+
+        &--Box {  
+            background: #fff;
+            overflow-y: scroll;
+            min-height: 900px;
+            max-height: 900px;
+        }
+        &--product{
+            display:flex;
+            border:1px solid black;
+            margin-top: 12px;
+            &:first-child{
+                margin-top:0;
+            }
+        }
+
+    }
+    
+}

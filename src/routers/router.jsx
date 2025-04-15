@@ -3,6 +3,7 @@ import App from "../App"
 import Home from "../Page/Home/Home";
 import Login from "../components/Login";
 import Register from "../components/Register";
+import Profile from "../Page/informationAuth/Information";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -11,6 +12,10 @@ const router = createBrowserRouter([
         {
             path: "/",
             element:<Home/>
+        },
+        {
+            path: "/profile",
+            element: <Profile />,
         },
         ],
     },
