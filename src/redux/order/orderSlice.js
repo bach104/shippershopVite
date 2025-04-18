@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   orders: [],
+  shipperOrders: [],
   currentPage: 1,
   totalPages: 1,
   totalOrders: 0,
@@ -12,6 +13,7 @@ const initialState = {
     successCount: 0,
     failedCount: 0,
     failedUpdates: [],
+    message: null,
   },
   filters: {
     username: '',
@@ -35,6 +37,11 @@ const orderSlice = createSlice({
       state.totalPages = action.payload.totalPages;
       state.totalOrders = action.payload.totalOrders;
     },
+    setShipperOrders: (state, action) => {
+      state.shipperOrders = action.payload.orders;
+      state.totalOrders = action.payload.count;
+    },
+    resetShipperOrders: () => initialState,
     setFilters: (state, action) => {
       state.filters = { ...state.filters, ...action.payload };
       state.currentPage = 1;
@@ -59,23 +66,25 @@ const orderSlice = createSlice({
     clearError: (state) => {
       state.error = null;
     },
-    // Add new reducers for status update
     startStatusUpdate: (state) => {
       state.updateStatus.isUpdating = true;
       state.updateStatus.successCount = 0;
       state.updateStatus.failedCount = 0;
       state.updateStatus.failedUpdates = [];
+      state.updateStatus.message = null;
     },
     statusUpdateSuccess: (state, action) => {
       state.updateStatus.isUpdating = false;
       state.updateStatus.successCount = action.payload.updatedCount;
       state.updateStatus.failedCount = action.payload.failedCount || 0;
       state.updateStatus.failedUpdates = action.payload.failedUpdates || [];
+      state.updateStatus.message = action.payload.message;
     },
     statusUpdateFailed: (state, action) => {
       state.updateStatus.isUpdating = false;
       state.updateStatus.failedCount = action.payload.failedCount || 0;
       state.updateStatus.failedUpdates = action.payload.failedUpdates || [];
+      state.updateStatus.message = action.payload.message;
       state.error = action.payload.message || 'Failed to update orders';
     },
     resetStatusUpdate: (state) => {
@@ -86,6 +95,8 @@ const orderSlice = createSlice({
 
 export const {
   setOrders,
+  setShipperOrders,
+  resetShipperOrders,
   setFilters,
   setPage,
   setSort,
@@ -100,6 +111,7 @@ export const {
 } = orderSlice.actions;
 
 export const selectAllOrders = (state) => state.shipperOrders.orders;
+export const selectShipperOrders = (state) => state.shipperOrders.shipperOrders;
 export const selectOrderFilters = (state) => state.shipperOrders.filters;
 export const selectCurrentPage = (state) => state.shipperOrders.currentPage;
 export const selectTotalPages = (state) => state.shipperOrders.totalPages;

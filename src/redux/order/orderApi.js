@@ -34,8 +34,22 @@ export const orderApi = createApi({
       },
     }),
     
-    // Add the new mutation for updating order status
-    updateOrderStatusShipper: builder.mutation({
+    getOrdersByShipper: builder.query({
+      query: () => '/api/orders/shipper/orders',
+      providesTags: ['Orders'],
+      transformResponse: (response) => {
+        if (response?.success !== false) {
+          return {
+            success: true,
+            orders: response?.orders || [],
+            count: response?.count || 0
+          };
+        }
+        throw new Error(response.message || 'Failed to fetch shipper orders');
+      },
+    }),
+    
+    createOrderStatusShipper: builder.mutation({
       query: (orders) => ({
         url: '/api/orders/shipper/status',
         method: 'PUT',
@@ -44,7 +58,13 @@ export const orderApi = createApi({
       invalidatesTags: ['Orders'],
       transformResponse: (response) => {
         if (response.success) {
-          return response;
+          return {
+            success: true,
+            updatedCount: response.updatedCount,
+            failedCount: response.failedCount || 0,
+            failedUpdates: response.failedUpdates || [],
+            message: response.message || 'Orders updated successfully'
+          };
         }
         throw new Error(response.message || 'Failed to update orders');
       },
@@ -61,5 +81,6 @@ export const orderApi = createApi({
 
 export const { 
   useGetAvailableOrdersQuery,
-  useUpdateOrderStatusShipperMutation,
+  useGetOrdersByShipperQuery,
+  useCreateOrderStatusShipperMutation,
 } = orderApi;

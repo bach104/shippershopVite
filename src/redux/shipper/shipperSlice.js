@@ -44,12 +44,9 @@ const shipperSlice = createSlice({
           ...state.currentShipper,
           ...action.payload,
         };
-        try {
           const serializedState = JSON.stringify(state);
           localStorage.setItem("shipperState", serializedState);
-        } catch (err) {
-          console.error("Could not update shipper info in localStorage", err);
-        }
+  
       }
     },
     clearShipper: (state) => {
@@ -64,6 +61,5 @@ const shipperSlice = createSlice({
     },
   },
 });
-
 export const { setShipper, updateShipperInfo, clearShipper } = shipperSlice.actions;
 export default shipperSlice.reducer;

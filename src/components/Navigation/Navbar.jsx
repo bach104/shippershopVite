@@ -10,7 +10,7 @@ const Navbar = () => {
             <NavbarMenu/>
           <nav className="nav__logo">
             <Link className="transition text-black" to="/">
-              Shoponline 
+              ShopVite
             </Link>
           </nav>
         </div>
@@ -21,8 +21,8 @@ const Navbar = () => {
             </Link>
           </li>
           <li>
-            <Link className="hover:text-gray-400 transition" to="/store">
-              Đã giao đến tay khách hàng
+            <Link className="hover:text-gray-400 transition" to="/delivery">
+              Nhận giao
             </Link>
           </li>
         </ul>

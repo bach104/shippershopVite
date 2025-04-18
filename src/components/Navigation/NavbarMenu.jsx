@@ -83,13 +83,13 @@ const NavbarMenu = () => {
       />
       <ul className={`mobile-menu z-20 ${isMenuOpen ? 'open' : ''}`}>
         <li onClick={toggleMenu}>
-          <Link className="menu-item gap-2" to="/nhan-don">
+          <Link className="menu-item gap-2" to="/">
             <FontAwesomeIcon icon={faListCheck} />
             Nhận giao đơn
           </Link>
         </li>
         <li onClick={toggleMenu}>
-          <Link className="menu-item gap-2" to="/dang-giao">
+          <Link className="menu-item gap-2" to="/delivery">
             <FontAwesomeIcon icon={faTruckFast} />
             Các đơn đang giao
           </Link>

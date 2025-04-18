@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 const ShowInformation = () => {
   const { currentShipper } = useSelector((state) => state.shipper);
   const [shipperInfo, setShipperInfo] = useState(currentShipper);
-  const [showAdditionalInfo, setShowAdditionalInfo] = useState(false); // State để điều khiển hiển thị
+  const [showAdditionalInfo, setShowAdditionalInfo] = useState(false);
 
   useEffect(() => {
     setShipperInfo(currentShipper);
@@ -15,13 +15,12 @@ const ShowInformation = () => {
   if (!shipperInfo) {
     return <div className="p-4">Loading...</div>;
   }
-
   const { 
     avatar, 
     yourname, 
     address, 
-    phoneNumber, 
-    email, 
+    phoneNumber,
+    email,
     cccd, 
     licensePlate,
     cccdFrontImage,  
@@ -111,8 +110,6 @@ const ShowInformation = () => {
             </button>
           </div>
         </div>
-
-        {/* Phần thông tin ẩn/hiện */}
         {showAdditionalInfo && (
           <div className="mt-2 container-width bg-gray-200 min-h-[10px] w-full p-4 space-y-6 
               flex flex-col md:flex-row md:flex-wrap gap-4">

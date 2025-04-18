@@ -9,7 +9,6 @@ const ManagerOrderInformation = ({ order, onClose }) => {
     return `${getBaseUrl()}/${image.replace(/\\/g, "/")}`;
   };
 
-  // Hàm định dạng ngày tháng
   const formatDate = (dateString) => {
     if (!dateString) return "N/A";
     const options = { 
@@ -35,7 +34,6 @@ const ManagerOrderInformation = ({ order, onClose }) => {
       </div>
       <section className="bg-white flex flex-col Manager__display--Box justify-between">
         <div className="space-y-4 p-4">
-          {/* Danh sách sản phẩm */}
           {order.items.map((item, index) => (
             <div key={index} className="Manager__display--product gap-4 h-36 justify-between p-2">
               <img 
@@ -58,7 +56,6 @@ const ManagerOrderInformation = ({ order, onClose }) => {
             </div>
           ))}
           
-          {/* Thông tin thanh toán */}
           <div className="bg-gray-100 p-4 rounded-sm shadow-sm">
             <h3 className="text-lg font-semibold mb-3">Thông tin thanh toán</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -84,7 +81,6 @@ const ManagerOrderInformation = ({ order, onClose }) => {
             </div>
           </div>
 
-          {/* Thông tin giao hàng */}
           <div className="bg-gray-100 p-4 rounded-sm shadow-sm">
             <h3 className="text-lg font-semibold mb-3">Thông tin giao hàng</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -98,14 +94,12 @@ const ManagerOrderInformation = ({ order, onClose }) => {
               </div>
             </div>
           </div>
-
-          {/* Thông tin khách hàng */}
           <div className="bg-gray-100 p-4 rounded-sm shadow-sm">
             <h3 className="text-lg font-semibold mb-3">Thông tin khách hàng</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <p><b>Tên khách hàng:</b> {order.customerInfo?.username || 'N/A'}</p>
-                <p><b>Email:</b> {order.customerInfo?.email || 'N/A'}</p>
+                <p><b>Tên khách hàng:</b> {order.shippingInfo.yourname}</p>
+                <p><b>Email:</b> {order.customerInfo.email || 'N/A'}</p>
               </div>
               <div>
                 <p><b>Số điện thoại:</b> {order.customerInfo?.phone || order.shippingInfo.phoneNumber}</p>
@@ -114,7 +108,6 @@ const ManagerOrderInformation = ({ order, onClose }) => {
           </div>
         </div>
         
-        {/* Nút đóng */}
         <div className="flex justify-end p-4">
           <button 
             className="bg-black cursor-pointer transition hover:opacity-80 text-white px-4 py-2 rounded"

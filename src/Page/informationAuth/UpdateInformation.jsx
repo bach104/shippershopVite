@@ -6,7 +6,6 @@ import { updateShipperInfo } from '../../redux/shipper/shipperSlice';
 import { useUpdateShipperMutation } from '../../redux/shipper/shipperApi';
 
 const UpdateInformation = () => {
-  // State quản lý dữ liệu form
   const [shipperData, setShipperData] = useState({
     yourname: '',
     address: '',
@@ -20,30 +19,25 @@ const UpdateInformation = () => {
     licensePlateImage: null
   });
 
-  // State quản lý lỗi và trạng thái
   const [phoneNumberError, setPhoneNumberError] = useState('');
   const [updateShipperApi, { isLoading }] = useUpdateShipperMutation();
   const [isSuccess, setIsSuccess] = useState(false);
   const dispatch = useDispatch();
 
-  // Xử lý thay đổi input text
   const handleChange = (e) => {
     const { name, value } = e.target;
     setShipperData({ ...shipperData, [name]: value });
 
-    // Reset lỗi số điện thoại khi người dùng nhập
     if (name === 'phoneNumber') {
       setPhoneNumberError('');
     }
   };
 
-  // Xử lý thay đổi file ảnh
   const handleFileChange = (e) => {
     const { name, files } = e.target;
     setShipperData({ ...shipperData, [name]: files[0] });
   };
 
-  // Xử lý submit form
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -122,7 +116,6 @@ const UpdateInformation = () => {
           />
         </div>
 
-        {/* Ảnh biển số xe */}
         <div className="flex flex-col md:flex-row md:items-center gap-2">
           <label className="w-full md:w-1/6">Ảnh biển số xe:</label>
           <input
@@ -133,8 +126,6 @@ const UpdateInformation = () => {
             onChange={handleFileChange}
           />
         </div>
-
-        {/* Họ và tên */}
         <div className="flex flex-col md:flex-row md:items-center gap-2">
           <label className="w-full md:w-1/6">Họ và tên:</label>
           <input
@@ -146,8 +137,6 @@ const UpdateInformation = () => {
             placeholder="Nhập họ và tên"
           />
         </div>
-
-        {/* Địa chỉ */}
         <div className="flex flex-col md:flex-row md:items-center gap-2">
           <label className="w-full md:w-1/6">Địa chỉ:</label>
           <input
@@ -177,8 +166,6 @@ const UpdateInformation = () => {
             )}
           </div>
         </div>
-
-        {/* Số CCCD */}
         <div className="flex flex-col md:flex-row md:items-center gap-2">
           <label className="w-full md:w-1/6">Số CCCD:</label>
           <input
@@ -190,7 +177,6 @@ const UpdateInformation = () => {
             placeholder="Nhập số CCCD"
           />
         </div>
-
         <div className="flex flex-col md:flex-row md:items-center gap-2">
           <label className="w-full md:w-1/6">Biển số xe:</label>
           <input

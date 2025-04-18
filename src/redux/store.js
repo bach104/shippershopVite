@@ -1,25 +1,23 @@
 import { configureStore } from "@reduxjs/toolkit";
 import shipperReducer from "./shipper/shipperSlice";
-import orderReducer from "./order/orderSlice"; // Import the new order slice
+import orderReducer from "./order/orderSlice";
 import { shipperApi } from "./shipper/shipperApi";
-import { orderApi } from "./order/orderApi"; // Import the new order API
+import { orderApi } from "./order/orderApi"; 
 import { checkTokenExpiration } from "../redux/token/tokenUtils";
 import { clearShipper } from "./shipper/shipperSlice";
 
 const store = configureStore({
   reducer: {
     shipper: shipperReducer,
-    shipperOrders: orderReducer, // Add the new order reducer
+    shipperOrders: orderReducer, 
     [shipperApi.reducerPath]: shipperApi.reducer,
-    [orderApi.reducerPath]: orderApi.reducer, // Add the new order API reducer
+    [orderApi.reducerPath]: orderApi.reducer, 
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
       .concat(shipperApi.middleware)
-      .concat(orderApi.middleware), // Add the order API middleware
+      .concat(orderApi.middleware),
 });
-
-// Token expiration check
 const initializeStore = () => {
   const state = store.getState();
   if (state.shipper.token && checkTokenExpiration(state.shipper.token)) {
