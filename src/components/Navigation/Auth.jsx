@@ -72,7 +72,7 @@ const Auth = () => {
             src={avatarUrl}
             onError={(e) => {
               e.target.src = avatarImg;
-              e.target.onerror = null; // Ngăn loop lỗi
+              e.target.onerror = null; 
             }}
             onClick={toggleMenu}
           />

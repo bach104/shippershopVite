@@ -18,7 +18,6 @@ const FeatureCard = ({ icon, color, title, description }) => (
     <p className="text-sm text-gray-600 pl-9">{description}</p>
   </div>
 );
-
 const ShipperLoginPrompt = () => {
   return (
     <div className="container-width mx-auto p-6 bg-white rounded-lg shadow-md mt-28 mb-20">
@@ -26,9 +25,7 @@ const ShipperLoginPrompt = () => {
         <FontAwesomeIcon icon={faExclamationCircle} className="text-yellow-600 text-xl" />
         <span className="font-medium">Bạn cần đăng nhập để truy cập tính năng này</span>
       </div>
-      
       <h2 className="text-2xl font-bold text-center mb-6">Quản lý đơn hàng shipper</h2>
-      
       <div className="space-y-4">
         <div className="p-4 border rounded-lg hover:bg-gray-50 transition flex items-center justify-between">
           <div className="flex items-center gap-3">

@@ -1,24 +1,21 @@
 import { useState } from "react";
-import { useCreateOrderStatusShipperMutation } from "../../redux/order/orderApi";
-import avatarImg from "../../assets/img/avatar.png";
-import { getBaseUrl } from "../../utils/baseUrl";
-
+import { useUpdateShipperOrderMutation } from "../redux/order/orderApi";
+import { toast } from 'react-toastify';
+import avatarImg from "../assets/img/avatar.png";
+import { getBaseUrl } from "../utils/baseUrl";
 const ManagerOrderInformation = ({ order, onClose }) => {
-  const [updateOrderStatus] = useCreateOrderStatusShipperMutation();
   const [showImageUpload, setShowImageUpload] = useState(false);
   const [showFailureReason, setShowFailureReason] = useState(false);
   const [images, setImages] = useState([]);
   const [note, setNote] = useState("");
   const [isUpdating, setIsUpdating] = useState(false);
   const [error, setError] = useState(null);
-
+  const [updateShipperOrder] = useUpdateShipperOrderMutation();
   const totalProducts = order.items.reduce((sum, item) => sum + item.quantity, 0);
-
   const getProductImage = (image) => {
     if (!image) return avatarImg;
     return `${getBaseUrl()}/${image.replace(/\\/g, "/")}`;
   };
-
   const formatDate = (dateString) => {
     if (!dateString) return "N/A";
     const options = { 
@@ -30,49 +27,39 @@ const ManagerOrderInformation = ({ order, onClose }) => {
     };
     return new Date(dateString).toLocaleDateString('vi-VN', options);
   };
-
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
     setImages(files);
   };
-
   const handleDeliverySuccess = async () => {
     if (images.length === 0) {
       setError("Vui lòng tải lên ít nhất một hình ảnh xác nhận");
       return;
     }
-
     try {
       setIsUpdating(true);
       setError(null);
-
-      // Convert images to base64
-      const imagePromises = images.map(file => {
-        return new Promise((resolve) => {
-          const reader = new FileReader();
-          reader.onload = () => resolve(reader.result);
-          reader.readAsDataURL(file);
-        });
+      
+      const formData = new FormData();
+      formData.append('orderId', order._id);
+      formData.append('status', 'đã giao đến tay khách hàng');
+      images.forEach((image) => {
+        formData.append('images', image);
       });
 
-      const base64Images = await Promise.all(imagePromises);
-
-      const response = await updateOrderStatus({
-        orders: [{
-          orderId: order._id,
-          status: "đã giao đến tay khách hàng",
-          images: base64Images,
-          note: "Giao hàng thành công"
-        }]
+      const response = await updateShipperOrder({
+        orderId: order._id,
+        status: 'đã giao đến tay khách hàng',
+        images
       }).unwrap();
-
+      
       if (response.success) {
-        onClose(); // Close the modal on success
-      } else {
-        setError(response.message || "Cập nhật trạng thái thất bại");
+        toast.success(response.message || "Xác nhận giao hàng thành công");
+        onClose();
       }
     } catch (err) {
-      setError(err.data?.message || err.message || "Đã xảy ra lỗi");
+      setError(err.data?.message || err.message || "Đã xảy ra lỗi khi cập nhật trạng thái");
+      toast.error(err.data?.message || err.message || "Đã xảy ra lỗi khi cập nhật trạng thái");
     } finally {
       setIsUpdating(false);
     }
@@ -87,22 +74,20 @@ const ManagerOrderInformation = ({ order, onClose }) => {
     try {
       setIsUpdating(true);
       setError(null);
-
-      const response = await updateOrderStatus({
-        orders: [{
-          orderId: order._id,
-          status: "giao hàng thất bại",
-          note: note.trim()
-        }]
+      
+      const response = await updateShipperOrder({
+        orderId: order._id,
+        status: 'giao hàng thất bại',
+        note
       }).unwrap();
-
+      
       if (response.success) {
-        onClose(); // Close the modal on success
-      } else {
-        setError(response.message || "Cập nhật trạng thái thất bại");
+        toast.success(response.message || "Đã ghi nhận giao hàng thất bại");
+        onClose();
       }
     } catch (err) {
-      setError(err.data?.message || err.message || "Đã xảy ra lỗi");
+      setError(err.data?.message || err.message || "Đã xảy ra lỗi khi cập nhật trạng thái");
+      toast.error(err.data?.message || err.message || "Đã xảy ra lỗi khi cập nhật trạng thái");
     } finally {
       setIsUpdating(false);
     }
@@ -115,6 +100,12 @@ const ManagerOrderInformation = ({ order, onClose }) => {
     setNote("");
     setError(null);
   };
+
+  const isDelivered = order.status === 'đã giao đến tay khách hàng';
+  const isFailed = order.status === 'giao hàng thất bại';
+  
+  const showSuccessButton = isFailed;
+  const showFailureButton = !isDelivered && !isFailed;
 
   return (
     <div className="max-width border border-black"> 
@@ -138,7 +129,9 @@ const ManagerOrderInformation = ({ order, onClose }) => {
                 src={getProductImage(item.image)} 
                 className="h-32 w-32 object-cover border border-black rounded-s" 
                 alt={item.name}
-                onError={(e) => (e.target.src = avatarImg)}
+                onError={(e) => {
+                  e.target.src = avatarImg;
+                }}
               />
               <div className="flex-1 shoppingItems__technology">
                 <h3 className="font-medium">{item.name}</h3>
@@ -204,15 +197,13 @@ const ManagerOrderInformation = ({ order, onClose }) => {
             </div>
           </div>
 
-          {/* Error message */}
           {error && (
             <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
               {error}
             </div>
           )}
 
-          {/* Image upload section */}
-          {showImageUpload && (
+          {showImageUpload && !isDelivered && (
             <div className="bg-gray-100 p-4 rounded-sm shadow-sm">
               <h3 className="text-lg font-semibold mb-3">Xác nhận giao hàng thành công</h3>
               <div className="mb-4">
@@ -258,8 +249,7 @@ const ManagerOrderInformation = ({ order, onClose }) => {
             </div>
           )}
 
-          {/* Delivery failure reason section */}
-          {showFailureReason && (
+          {showFailureReason && showFailureButton && (
             <div className="bg-gray-100 p-4 rounded-sm shadow-sm">
               <h3 className="text-lg font-semibold mb-3">Ghi lại lý do giao hàng thất bại</h3>
               <div className="mb-4">
@@ -268,7 +258,9 @@ const ManagerOrderInformation = ({ order, onClose }) => {
                 </label>
                 <textarea
                   value={note}
-                  onChange={(e) => setNote(e.target.value)}
+                  onChange={(e) => {
+                    setNote(e.target.value);
+                  }}
                   rows={4}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
                   placeholder="Nhập lý do giao hàng thất bại..."
@@ -296,28 +288,31 @@ const ManagerOrderInformation = ({ order, onClose }) => {
           )}
         </div>
         
-        {/* Action buttons - only show if not in image upload or failure reason mode */}
         {!showImageUpload && !showFailureReason && (
           <div className="flex justify-between p-4">
-            <button 
-              onClick={() => {
-                setShowImageUpload(true);
-                setShowFailureReason(false);
-              }}
-              className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded mr-4"
-            >
-              Đã giao đến tay khách hàng
-            </button>
-            <div>
+            {(showSuccessButton || !isDelivered) && (
               <button 
                 onClick={() => {
-                  setShowFailureReason(true);
-                  setShowImageUpload(false);
+                  setShowImageUpload(true);
+                  setShowFailureReason(false);
                 }}
-                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded mr-4"
+                className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded mr-4"
               >
-                Giao hàng thất bại
+                Đã giao đến tay khách hàng
               </button>
+            )}
+            <div>
+              {showFailureButton && (
+                <button 
+                  onClick={() => {
+                    setShowFailureReason(true);
+                    setShowImageUpload(false);
+                  }}
+                  className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded mr-4"
+                >
+                  Giao hàng thất bại
+                </button>
+              )}
               <button 
                 className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded"
                 onClick={() => {
@@ -334,5 +329,4 @@ const ManagerOrderInformation = ({ order, onClose }) => {
     </div>
   );
 };
-
 export default ManagerOrderInformation;

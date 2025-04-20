@@ -25,13 +25,17 @@ const Navbar = () => {
               Nhận giao
             </Link>
           </li>
+          <li>
+            <Link className="hover:text-gray-400 transition" to="/verifySuccess">
+              Giao thành công
+            </Link>
+          </li>
         </ul>
         <div className="flex items-center space-x-4">
           <span>
-            <Link className="hover:text-gray-400 transition" to="/products">
+            <Link className="hover:text-gray-400 transition" to="/verifySuccess">
               <Search className="w-5 h-5 cursor-pointer" />
             </Link>
-           
           </span>
           <span>
             <Auth />

@@ -5,6 +5,7 @@ import Login from "../components/Login";
 import Register from "../components/Register";
 import Profile from "../Page/informationAuth/Information";
 import Verifyofme from "../Page/verify/verifyofme"
+import VerifySuccess from "../Page/verifySuccess/verifySuccess"
 const router = createBrowserRouter([
   {
     path: "/",
@@ -21,6 +22,10 @@ const router = createBrowserRouter([
         {
             path: "/delivery",
             element: <Verifyofme/>,
+        },
+        {
+            path: "/verifySuccess",
+            element: <VerifySuccess/>,
         },
     ],
 

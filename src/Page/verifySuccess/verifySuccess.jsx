@@ -43,12 +43,11 @@ const Verifyofme = () => {
   } = useGetOrdersByShipperQuery(undefined, {
     skip: !currentShipper
   });
-  
   const transformedOrders = useMemo(() => {
     if (!response?.success) return [];
     
     return response.orders
-      .filter(item => item.status === 'đang giao' || item.status === 'giao hàng thất bại') // Lấy cả đơn hàng "đang giao" và "giao hàng thất bại"
+      .filter(item => item.status === 'đã giao đến tay khách hàng') 
       .map(item => ({
         ...item.order,
         shipperStatus: item.status,
@@ -112,7 +111,7 @@ const Verifyofme = () => {
     <div className="container-width mt-20 mb-16">
       {/* Header section */}
       <div className="bg-black opacity-70 p-4 font-bold flex justify-between items-center">
-        <h2 className="text-xl text-white">Các đơn hàng đang giao và giao thất bại</h2>
+        <h2 className="text-xl text-white">Các đơn hàng đã giao thành công</h2>
         {transformedOrders.length > 0 && (
           <p className="text-white">
             Hiển thị {showingFrom}-{showingTo} trong tổng số {transformedOrders.length} đơn hàng
@@ -148,7 +147,7 @@ const Verifyofme = () => {
                   className="text-gray-400 text-4xl mb-3" 
                 />
                 <h3 className="text-lg font-medium mb-1">Không có đơn hàng</h3>
-                <p className="text-gray-600">Hiện tại không có đơn hàng nào đang giao hoặc giao thất bại</p>
+                <p className="text-gray-600">Hiện tại không có đơn hàng nào đã giao thành công</p>
               </div>
             ) : (
               currentPageOrders.map((order) => (
@@ -156,7 +155,6 @@ const Verifyofme = () => {
                   key={order._id}
                   className="Manager__display--product flex h-36 gap-4 justify-between p-2 mb-4 bg-white rounded-md shadow-sm hover:shadow-md transition-shadow"
                 >
-                  {/* Order details */}
                   <div className="flex items-center">
                     {order.items[0]?.image ? (
                       <img 
@@ -254,7 +252,7 @@ const Verifyofme = () => {
           </div>
         </div>
       )}
-      </div>
+    </div>
   );
 };
 

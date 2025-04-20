@@ -73,7 +73,6 @@ const NavbarMenu = () => {
       toast.error(err?.data?.message || "Đăng xuất thất bại");
     }
   };
-
   return (
     <nav className="mobile-menu-container" ref={menuRef}>
       <FontAwesomeIcon 
@@ -95,7 +94,7 @@ const NavbarMenu = () => {
           </Link>
         </li>
         <li onClick={toggleMenu}>
-          <Link className="menu-item gap-2" to="/da-giao">
+          <Link className="menu-item gap-2" to="/verifySuccess">
             <FontAwesomeIcon icon={faHandshakeSimple} />
             Đơn giao đến tay khách
           </Link>

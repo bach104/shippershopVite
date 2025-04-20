@@ -13,7 +13,7 @@ export const orderApi = createApi({
       return headers;
     },
   }),
-  tagTypes: ['Orders'],
+  tagTypes: ['Orders', 'ShipperOrder'],
   endpoints: (builder) => ({
     getAvailableOrders: builder.query({
       query: (params) => ({
@@ -55,7 +55,7 @@ export const orderApi = createApi({
         method: 'PUT',
         body: { orders },
       }),
-      invalidatesTags: ['Orders'],
+      invalidatesTags: ['Orders', 'ShipperOrder'],
       transformResponse: (response) => {
         if (response.success) {
           return {
@@ -63,16 +63,85 @@ export const orderApi = createApi({
             updatedCount: response.updatedCount,
             failedCount: response.failedCount || 0,
             failedUpdates: response.failedUpdates || [],
-            message: response.message || 'Orders updated successfully'
+            message: response.message || 'Orders updated successfully',
+            results: response.results || []
           };
         }
         throw new Error(response.message || 'Failed to update orders');
       },
       transformErrorResponse: (response) => {
+        // Xử lý trường hợp shipper chưa cập nhật đủ thông tin
+        if (response.status === 400 && response.data?.missingFields) {
+          return {
+            success: false,
+            status: response.status,
+            data: response.data,
+            message: response.data.message || 'Vui lòng cập nhật đầy đủ thông tin shipper',
+            missingFields: response.data.missingFields,
+            isProfileIncomplete: true
+          };
+        }
         return {
+          success: false,
           status: response.status,
           data: response.data,
           message: response.data?.message || 'Failed to update orders',
+        };
+      },
+    }),
+
+    updateShipperOrder: builder.mutation({
+      query: (data) => {
+        const formData = new FormData();
+        formData.append('orderId', data.orderId);
+        formData.append('status', data.status);
+        
+        if (data.note) formData.append('note', data.note);
+        if (data.images && data.images.length > 0) {
+          data.images.forEach((image) => {
+            formData.append('images', image);
+          });
+        }
+
+        return {
+          url: '/api/orders/shipper/ordersStatus',
+          method: 'PUT',
+          body: formData,
+          headers: {
+            Accept: 'application/json',
+          },
+        };
+      },
+      invalidatesTags: ['Orders', 'ShipperOrder'],
+      transformResponse: (response) => {
+        if (response.success) {
+          return {
+            success: true,
+            message: response.message,
+            data: {
+              order: response.data.order,
+              shipperOrder: response.data.shipperOrder
+            }
+          };
+        }
+        throw new Error(response.message || 'Failed to update order status');
+      },
+      transformErrorResponse: (response) => {
+        if (response.status === 400 && response.data?.missingFields) {
+          return {
+            success: false,
+            status: response.status,
+            data: response.data,
+            message: response.data.message || 'Vui lòng cập nhật đầy đủ thông tin shipper',
+            missingFields: response.data.missingFields,
+            isProfileIncomplete: true
+          };
+        }
+        return {
+          success: false,
+          status: response.status,
+          data: response.data,
+          message: response.data?.message || 'Failed to update order status',
         };
       },
     }),
@@ -83,4 +152,5 @@ export const {
   useGetAvailableOrdersQuery,
   useGetOrdersByShipperQuery,
   useCreateOrderStatusShipperMutation,
+  useUpdateShipperOrderMutation,
 } = orderApi;

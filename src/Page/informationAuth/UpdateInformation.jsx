@@ -41,7 +41,6 @@ const UpdateInformation = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Validate số điện thoại (nếu có nhập)
     const phoneNumberRegex = /^[0-9]{10}$/;
     if (shipperData.phoneNumber && !phoneNumberRegex.test(shipperData.phoneNumber)) {
       setPhoneNumberError('Số điện thoại không hợp lệ. Vui lòng nhập số điện thoại gồm 10 chữ số.');
@@ -49,7 +48,6 @@ const UpdateInformation = () => {
     }
 
     try {
-      // Tạo FormData để gửi cả file và text
       const formData = new FormData();
       for (const key in shipperData) {
         if (shipperData[key] !== null && shipperData[key] !== undefined && shipperData[key] !== '') {
@@ -80,7 +78,6 @@ const UpdateInformation = () => {
   return (
     <div className="boxContainer pb-10">
       <form className="space-y-4 p-5 bg-gray-200 mt-4" onSubmit={handleSubmit}>
-        {/* Avatar */}
         <div className="flex flex-col md:flex-row md:items-center gap-2">
           <label className="w-full md:w-1/6">Avatar:</label>
           <input
@@ -91,8 +88,6 @@ const UpdateInformation = () => {
             onChange={handleFileChange}
           />
         </div>
-
-        {/* Mặt trước CCCD */}
         <div className="flex flex-col md:flex-row md:items-center gap-2">
           <label className="w-full md:w-1/6">Mặt trước CCCD:</label>
           <input
@@ -104,7 +99,6 @@ const UpdateInformation = () => {
           />
         </div>
 
-        {/* Mặt sau CCCD */}
         <div className="flex flex-col md:flex-row md:items-center gap-2">
           <label className="w-full md:w-1/6">Mặt sau CCCD:</label>
           <input
@@ -149,7 +143,6 @@ const UpdateInformation = () => {
           />
         </div>
 
-        {/* Số điện thoại */}
         <div className="flex flex-col md:flex-row md:items-center gap-2">
           <label className="w-full md:w-1/6">Số điện thoại:</label>
           <div className="w-full md:w-2/6">
@@ -189,7 +182,6 @@ const UpdateInformation = () => {
           />
         </div>
 
-        {/* Nút submit */}
         <div className="w-full flex justify-end">
           <button
             type="submit"

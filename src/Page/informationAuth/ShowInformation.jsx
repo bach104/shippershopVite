@@ -9,7 +9,7 @@ const ShowInformation = () => {
   const [showAdditionalInfo, setShowAdditionalInfo] = useState(false);
 
   useEffect(() => {
-    setShipperInfo(currentShipper);
+    setShipperInfo(JSON.parse(JSON.stringify(currentShipper)));
   }, [currentShipper]);
 
   if (!shipperInfo) {
@@ -27,21 +27,38 @@ const ShowInformation = () => {
     cccdBackImage,    
     licensePlateImage  
   } = shipperInfo;
-  
   const renderImage = (imagePath, altText) => {
-    return imagePath ? (
-      <img 
-        src={`${getBaseUrl()}/uploads/${imagePath}`} 
-        alt={altText}
-        className="w-full h-96 object-contain border rounded bg-white"
-        onError={(e) => {
-          e.target.src = avatarImg;
-          e.target.onerror = null;
-        }}
-      />
-    ) : (
-      <div className="w-full h-96 relative bg-gray-100 border rounded flex items-center justify-center">
-        <p className="text-gray-500 text-lg">Chưa có hình ảnh</p>
+    if (!imagePath || imagePath === "null" || imagePath === "undefined" || imagePath === "uploads/") {
+      return (
+        <div className="w-full h-96 relative bg-gray-100 border rounded flex items-center justify-center">
+          <p className="text-gray-500 text-lg">Chưa có hình ảnh</p>
+        </div>
+      );
+    }
+    const normalizedPath = imagePath.startsWith('uploads/') 
+      ? imagePath.replace('uploads/', '') 
+      : imagePath;
+
+    const imageUrl = `${getBaseUrl()}/uploads/${normalizedPath}`;
+
+    return (
+      <div className="w-full h-96 relative border rounded bg-white flex items-center justify-center overflow-hidden">
+        <img 
+          src={imageUrl}
+          alt={altText}
+          className="max-w-full max-h-full object-contain"
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = avatarImg;
+            e.target.parentElement.classList.add('bg-gray-100');
+            e.target.parentElement.innerHTML = '<p class="text-gray-500 text-lg">Không thể tải hình ảnh</p>';
+          }}
+          onLoad={(e) => {
+            if (e.target.naturalWidth === 0) {
+              e.target.onerror();
+            }
+          }}
+        />
       </div>
     );
   };
@@ -57,7 +74,7 @@ const ShowInformation = () => {
             <div className="w-full md:w-auto md:flex md:flex-col md:items-center">
               {avatar ? (
                 <img
-                  src={`${getBaseUrl()}/uploads/${avatar}`}
+                  src={`${getBaseUrl()}/uploads/${avatar.startsWith('uploads/') ? avatar.replace('uploads/', '') : avatar}`}
                   alt="Avatar"
                   className="w-full h-48 object-cover rounded-none 
                             md:w-56 md:h-56 md:rounded-full md:object-cover"

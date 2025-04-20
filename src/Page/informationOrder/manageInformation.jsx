@@ -120,5 +120,4 @@ const ManagerOrderInformation = ({ order, onClose }) => {
     </div>
   );
 };
-
 export default ManagerOrderInformation;
