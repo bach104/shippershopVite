@@ -42,14 +42,14 @@ const ManagerOrderInformation = ({ order, onClose }) => {
       
       const formData = new FormData();
       formData.append('orderId', order._id);
-      formData.append('status', 'đã giao đến tay khách hàng');
+      formData.append('status', 'đã nhận được hàng');
       images.forEach((image) => {
         formData.append('images', image);
       });
 
       const response = await updateShipperOrder({
         orderId: order._id,
-        status: 'đã giao đến tay khách hàng',
+        status: 'đã nhận được hàng',
         images
       }).unwrap();
       
@@ -101,7 +101,7 @@ const ManagerOrderInformation = ({ order, onClose }) => {
     setError(null);
   };
 
-  const isDelivered = order.status === 'đã giao đến tay khách hàng';
+  const isDelivered = order.status === 'đã nhận được hàng';
   const isFailed = order.status === 'giao hàng thất bại';
   
   const showSuccessButton = isFailed;
@@ -188,7 +188,7 @@ const ManagerOrderInformation = ({ order, onClose }) => {
             <h3 className="text-lg font-semibold mb-3">Thông tin khách hàng</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <p><b>Tên khách hàng:</b> {order.customerInfo?.username || 'N/A'}</p>
+                <p><b>Tên khách hàng:</b> {order.shippingInfo.yourname || 'N/A'}</p>
                 <p><b>Email:</b> {order.customerInfo?.email || 'N/A'}</p>
               </div>
               <div>
@@ -196,13 +196,11 @@ const ManagerOrderInformation = ({ order, onClose }) => {
               </div>
             </div>
           </div>
-
           {error && (
             <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
               {error}
             </div>
           )}
-
           {showImageUpload && !isDelivered && (
             <div className="bg-gray-100 p-4 rounded-sm shadow-sm">
               <h3 className="text-lg font-semibold mb-3">Xác nhận giao hàng thành công</h3>
@@ -248,7 +246,6 @@ const ManagerOrderInformation = ({ order, onClose }) => {
               </div>
             </div>
           )}
-
           {showFailureReason && showFailureButton && (
             <div className="bg-gray-100 p-4 rounded-sm shadow-sm">
               <h3 className="text-lg font-semibold mb-3">Ghi lại lý do giao hàng thất bại</h3>
@@ -287,7 +284,6 @@ const ManagerOrderInformation = ({ order, onClose }) => {
             </div>
           )}
         </div>
-        
         {!showImageUpload && !showFailureReason && (
           <div className="flex justify-between p-4">
             {(showSuccessButton || !isDelivered) && (

@@ -39,9 +39,7 @@ const ShipperLoginPrompt = () => {
             Đăng nhập ngay
           </Link>
         </div>
-        
         <h3 className="text-lg font-semibold mt-8 mb-3 border-b pb-2">Các tính năng chính:</h3>
-        
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FeatureCard 
             icon={faListCheck}
@@ -49,21 +47,18 @@ const ShipperLoginPrompt = () => {
             title="Đơn hàng đã nhận"
             description="Xem các đơn hàng bạn đã nhận giao"
           />
-          
           <FeatureCard 
             icon={faTruckFast}
             color="text-yellow-500"
             title="Đơn đang giao"
             description="Theo dõi các đơn hàng đang trong quá trình giao"
           />
-          
           <FeatureCard 
             icon={faHandshakeSimple}
             color="text-purple-500"
             title="Xác nhận giao hàng"
             description="Cập nhật trạng thái đơn hàng đã giao thành công"
           />
-          
           <FeatureCard 
             icon={faUser}
             color="text-blue-500"
@@ -75,5 +70,4 @@ const ShipperLoginPrompt = () => {
     </div>
   );
 };
-
 export default ShipperLoginPrompt;

@@ -18,7 +18,7 @@ import {
 const ORDERS_PER_PAGE = 20;
 const STATUS_COLORS = {
   'đang giao': 'text-blue-600',
-  'đã giao đến tay khách hàng': 'text-green-600',
+  'đã nhận được hàng': 'text-green-600',
   'giao hàng thất bại': 'text-red-600',
   'default': 'text-gray-600'
 };
@@ -225,7 +225,6 @@ const Verifyofme = () => {
           </section>
         </div>
       </div>
-      
       {totalPages > 1 && (
         <div className="flex h-14 bg-black opacity-70 justify-between  p-2 gap-2 items-center">
           <span className="text-white flex-1 text-center">
@@ -257,5 +256,4 @@ const Verifyofme = () => {
       </div>
   );
 };
-
 export default Verifyofme;

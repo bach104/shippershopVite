@@ -18,7 +18,7 @@ import {
 const ORDERS_PER_PAGE = 20;
 const STATUS_COLORS = {
   'đang giao': 'text-blue-600',
-  'đã giao đến tay khách hàng': 'text-green-600',
+  'đã nhận được hàng': 'text-green-600',
   'giao hàng thất bại': 'text-red-600',
   'default': 'text-gray-600'
 };
@@ -47,7 +47,7 @@ const Verifyofme = () => {
     if (!response?.success) return [];
     
     return response.orders
-      .filter(item => item.status === 'đã giao đến tay khách hàng') 
+      .filter(item => item.status === 'đã nhận được hàng') 
       .map(item => ({
         ...item.order,
         shipperStatus: item.status,

@@ -64,8 +64,7 @@ const ProfileUpdateModal = ({
       </div>
     </div>
   );
-};
-
+}
 ProfileUpdateModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,

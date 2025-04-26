@@ -131,7 +131,6 @@ const orderSlice = createSlice({
       state.singleOrderUpdate.isProfileIncomplete = false;
       state.singleOrderUpdate.missingFields = null;
       
-      // Update order in orders array
       if (action.payload.data?.order) {
         const orderIndex = state.orders.findIndex(o => o._id === action.payload.data.order._id);
         if (orderIndex !== -1) {
@@ -145,7 +144,6 @@ const orderSlice = createSlice({
         }
       }
       
-      // Update shipper order in shipperOrders array
       if (action.payload.data?.shipperOrder) {
         const shipperOrderIndex = state.shipperOrders.findIndex(
           o => o.orderId === action.payload.data.shipperOrder.orderId
