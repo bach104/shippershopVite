@@ -56,7 +56,7 @@ const Register = () => {
       toast.success("Đăng ký thành công!");
       setIsSuccess(true);
       setTimeout(() => {
-        navigate("/login");
+        navigate("/dang_nhap");
       }, 1500);
     } catch (err) {
       const message = err?.data?.message || "Đã có lỗi xảy ra.";
@@ -193,7 +193,7 @@ const Register = () => {
 
         <p className="p-3">
           Bạn đã có tài khoản?{" "}
-          <Link className="font-bold" to="/login">
+          <Link className="font-bold" to="/dang_nhap">
             Đăng nhập
           </Link>{" "}
           để vào shop

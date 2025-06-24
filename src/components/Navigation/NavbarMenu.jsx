@@ -84,23 +84,23 @@ const NavbarMenu = () => {
         <li onClick={toggleMenu}>
           <Link className="menu-item gap-2" to="/">
             <FontAwesomeIcon icon={faListCheck} />
-            Nhận giao đơn
+            Sản phẩm cần giao
           </Link>
         </li>
         <li onClick={toggleMenu}>
-          <Link className="menu-item gap-2" to="/delivery">
+          <Link className="menu-item gap-2" to="/nhan_giao">
             <FontAwesomeIcon icon={faTruckFast} />
-            Các đơn đang giao
+            Nhận giao
           </Link>
         </li>
         <li onClick={toggleMenu}>
-          <Link className="menu-item gap-2" to="/verifySuccess">
+          <Link className="menu-item gap-2" to="/don_hang_da_giao">
             <FontAwesomeIcon icon={faHandshakeSimple} />
             Đơn giao đến tay khách
           </Link>
         </li>
         <li onClick={toggleMenu}>
-          <Link className="menu-item gap-2" to="/profile">
+          <Link className="menu-item gap-2" to="/thong_tin">
             <FontAwesomeIcon icon={faUser} />
             Thông tin cá nhân
           </Link>
@@ -117,7 +117,7 @@ const NavbarMenu = () => {
           </li>
         ) : (
           <li onClick={toggleMenu}>
-            <Link className="menu-item gap-2" to="/login">
+            <Link className="menu-item gap-2" to="/dang_nhap">
               <FontAwesomeIcon icon={faRightToBracket} />
               Đăng nhập
             </Link>

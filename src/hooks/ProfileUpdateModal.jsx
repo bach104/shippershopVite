@@ -21,7 +21,6 @@ const ProfileUpdateModal = ({
     cccdBackImage: 'Ảnh mặt sau CCCD',
     licensePlateImage: 'Ảnh biển số xe'
   };
-
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-lg p-6 max-w-md w-full text-black">
@@ -35,7 +34,6 @@ const ProfileUpdateModal = ({
             <p className="text-gray-600 mt-1">{errorMessage}</p>
           </div>
         </div>
-        
         <div className="bg-yellow-50 border-l-4 border-yellow-500 p-4 mb-6">
           <p className="text-yellow-700">
             Vui lòng cập nhật đầy đủ thông tin cá nhân trước khi nhận đơn hàng:

@@ -58,8 +58,8 @@ const Auth = () => {
   };
 
   const shipperDropDownMenus = [
-    { label: "Thông tin cá nhân", path: "/profile" },
-    { label: "Đơn hàng đã giao", path: "/orders" },
+    { label: "Thông tin cá nhân", path: "/thong_tin" },
+    { label: "Đơn hàng đã giao", path: "/don_hang_da_giao" },
   ];
 
   return (
@@ -98,7 +98,7 @@ const Auth = () => {
           )}
         </>
       ) : (
-        <Link to="/login">
+        <Link to="/dang_nhap">
           <User className="w-5 h-5 cursor-pointer" />
         </Link>
       )}

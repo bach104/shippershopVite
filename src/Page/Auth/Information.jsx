@@ -19,7 +19,7 @@ const Information = () => {
           </p>
           <div className="flex flex-col space-y-3">
             <button
-              onClick={() => navigate("/login")}
+              onClick={() => navigate("/dang_nhap")}
               className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg transition duration-200"
             >
               Đăng nhập ngay

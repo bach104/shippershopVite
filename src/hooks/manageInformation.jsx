@@ -1,21 +1,22 @@
 import { useState } from "react";
 import { useUpdateShipperOrderMutation } from "../redux/order/orderApi";
 import { toast } from 'react-toastify';
-import avatarImg from "../assets/img/avatar.png";
-import { getBaseUrl } from "../utils/baseUrl";
+import OrderItemList from "../Page/base/cart/OrderItemList";
+import { 
+  DeliverySuccessForm, 
+  DeliveryFailureForm, 
+  ActionButtons 
+} from "../Page/base/btn/FormOrderItem";
+
 const ManagerOrderInformation = ({ order, onClose }) => {
   const [showImageUpload, setShowImageUpload] = useState(false);
   const [showFailureReason, setShowFailureReason] = useState(false);
-  const [images, setImages] = useState([]);
-  const [note, setNote] = useState("");
   const [isUpdating, setIsUpdating] = useState(false);
   const [error, setError] = useState(null);
   const [updateShipperOrder] = useUpdateShipperOrderMutation();
+
   const totalProducts = order.items.reduce((sum, item) => sum + item.quantity, 0);
-  const getProductImage = (image) => {
-    if (!image) return avatarImg;
-    return `${getBaseUrl()}/${image.replace(/\\/g, "/")}`;
-  };
+  
   const formatDate = (dateString) => {
     if (!dateString) return "N/A";
     const options = { 
@@ -27,26 +28,12 @@ const ManagerOrderInformation = ({ order, onClose }) => {
     };
     return new Date(dateString).toLocaleDateString('vi-VN', options);
   };
-  const handleImageChange = (e) => {
-    const files = Array.from(e.target.files);
-    setImages(files);
-  };
-  const handleDeliverySuccess = async () => {
-    if (images.length === 0) {
-      setError("Vui lòng tải lên ít nhất một hình ảnh xác nhận");
-      return;
-    }
+
+  const handleDeliverySuccess = async (images) => {
     try {
       setIsUpdating(true);
       setError(null);
       
-      const formData = new FormData();
-      formData.append('orderId', order._id);
-      formData.append('status', 'đã nhận được hàng');
-      images.forEach((image) => {
-        formData.append('images', image);
-      });
-
       const response = await updateShipperOrder({
         orderId: order._id,
         status: 'đã nhận được hàng',
@@ -65,12 +52,7 @@ const ManagerOrderInformation = ({ order, onClose }) => {
     }
   };
 
-  const handleDeliveryFailure = async () => {
-    if (!note.trim()) {
-      setError("Vui lòng nhập lý do giao hàng thất bại");
-      return;
-    }
-
+  const handleDeliveryFailure = async (note) => {
     try {
       setIsUpdating(true);
       setError(null);
@@ -96,16 +78,15 @@ const ManagerOrderInformation = ({ order, onClose }) => {
   const resetForms = () => {
     setShowImageUpload(false);
     setShowFailureReason(false);
-    setImages([]);
-    setNote("");
     setError(null);
   };
 
   const isDelivered = order.status === 'đã nhận được hàng';
   const isFailed = order.status === 'giao hàng thất bại';
+  const isShipped = order.status === 'đã giao cho bên vận chuyển';
   
-  const showSuccessButton = isFailed;
-  const showFailureButton = !isDelivered && !isFailed;
+  const showSuccessButton = isFailed || (!isDelivered && !isShipped);
+  const showFailureButton = !isDelivered && !isFailed && !isShipped;
 
   return (
     <div className="max-width border border-black"> 
@@ -123,29 +104,7 @@ const ManagerOrderInformation = ({ order, onClose }) => {
       </div>
       <section className="bg-white flex flex-col Manager__display--Box justify-between">
         <div className="space-y-4 p-4">
-          {order.items.map((item, index) => (
-            <div key={index} className="Manager__display--product gap-4 h-36 justify-between p-2">
-              <img 
-                src={getProductImage(item.image)} 
-                className="h-32 w-32 object-cover border border-black rounded-s" 
-                alt={item.name}
-                onError={(e) => {
-                  e.target.src = avatarImg;
-                }}
-              />
-              <div className="flex-1 shoppingItems__technology">
-                <h3 className="font-medium">{item.name}</h3>
-                <p className="text-sm">
-                  <b>Giá:</b> {(item.price * item.quantity).toLocaleString('vi-VN')}đ
-                </p>
-                <p className="text-sm">
-                  <b>Số lượng:</b> {item.quantity}
-                </p>
-                {item.size && <p className="text-sm"><b>Size:</b> {item.size}</p>}
-                {item.color && <p className="text-sm"><b>Màu:</b> {item.color}</p>}
-              </div>
-            </div>
-          ))}
+          <OrderItemList items={order.items} />
           
           <div className="bg-gray-100 p-4 rounded-sm shadow-sm">
             <h3 className="text-lg font-semibold mb-3">Thông tin thanh toán</h3>
@@ -171,6 +130,7 @@ const ManagerOrderInformation = ({ order, onClose }) => {
               </div>
             </div>
           </div>
+          
           <div className="bg-gray-100 p-4 rounded-sm shadow-sm">
             <h3 className="text-lg font-semibold mb-3">Thông tin giao hàng</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -184,6 +144,7 @@ const ManagerOrderInformation = ({ order, onClose }) => {
               </div>
             </div>
           </div>
+          
           <div className="bg-gray-100 p-4 rounded-sm shadow-sm">
             <h3 className="text-lg font-semibold mb-3">Thông tin khách hàng</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -196,133 +157,58 @@ const ManagerOrderInformation = ({ order, onClose }) => {
               </div>
             </div>
           </div>
+          
           {error && (
             <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
               {error}
             </div>
           )}
-          {showImageUpload && !isDelivered && (
-            <div className="bg-gray-100 p-4 rounded-sm shadow-sm">
-              <h3 className="text-lg font-semibold mb-3">Xác nhận giao hàng thành công</h3>
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Tải lên hình ảnh xác nhận (bắt buộc)
-                </label>
-                <input
-                  type="file"
-                  multiple
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  className="block w-full text-sm text-gray-500
-                    file:mr-4 file:py-2 file:px-4
-                    file:rounded-md file:border-0
-                    file:text-sm file:font-semibold
-                    file:bg-black file:text-white
-                    hover:file:bg-gray-700"
-                />
-                {images.length > 0 && (
-                  <p className="mt-2 text-sm text-gray-600">
-                    Đã chọn {images.length} hình ảnh
-                  </p>
-                )}
-              </div>
-              <div className="flex justify-end">
-                <button
-                  onClick={() => {
-                    setShowImageUpload(false);
-                    setError(null);
-                  }}
-                  className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded mr-2"
-                >
-                  Hủy
-                </button>
-                <button
-                  onClick={handleDeliverySuccess}
-                  disabled={isUpdating}
-                  className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded disabled:opacity-50"
-                >
-                  {isUpdating ? "Đang xử lý..." : "Xác nhận"}
-                </button>
-              </div>
-            </div>
+          
+          {showImageUpload && !isDelivered && !isShipped && (
+            <DeliverySuccessForm
+              order={order}
+              onCancel={() => {
+                setShowImageUpload(false);
+                setError(null);
+              }}
+              onSuccess={handleDeliverySuccess}
+              isUpdating={isUpdating}
+            />
           )}
+          
           {showFailureReason && showFailureButton && (
-            <div className="bg-gray-100 p-4 rounded-sm shadow-sm">
-              <h3 className="text-lg font-semibold mb-3">Ghi lại lý do giao hàng thất bại</h3>
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Lý do (bắt buộc)
-                </label>
-                <textarea
-                  value={note}
-                  onChange={(e) => {
-                    setNote(e.target.value);
-                  }}
-                  rows={4}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
-                  placeholder="Nhập lý do giao hàng thất bại..."
-                />
-              </div>
-              <div className="flex justify-end">
-                <button
-                  onClick={() => {
-                    setShowFailureReason(false);
-                    setError(null);
-                  }}
-                  className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded mr-2"
-                >
-                  Hủy
-                </button>
-                <button
-                  onClick={handleDeliveryFailure}
-                  disabled={isUpdating}
-                  className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded disabled:opacity-50"
-                >
-                  {isUpdating ? "Đang xử lý..." : "Xác nhận"}
-                </button>
-              </div>
-            </div>
+            <DeliveryFailureForm
+              onCancel={() => {
+                setShowFailureReason(false);
+                setError(null);
+              }}
+              onFailure={handleDeliveryFailure}
+              isUpdating={isUpdating}
+            />
           )}
         </div>
+        
         {!showImageUpload && !showFailureReason && (
-          <div className="flex justify-between p-4">
-            {(showSuccessButton || !isDelivered) && (
-              <button 
-                onClick={() => {
-                  setShowImageUpload(true);
-                  setShowFailureReason(false);
-                }}
-                className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded mr-4"
-              >
-                Đã giao đến tay khách hàng
-              </button>
-            )}
-            <div>
-              {showFailureButton && (
-                <button 
-                  onClick={() => {
-                    setShowFailureReason(true);
-                    setShowImageUpload(false);
-                  }}
-                  className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded mr-4"
-                >
-                  Giao hàng thất bại
-                </button>
-              )}
-              <button 
-                className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded"
-                onClick={() => {
-                  resetForms();
-                  onClose();
-                }}
-              >
-                Đóng
-              </button>
-            </div>
-          </div>
+          <ActionButtons
+            showSuccessButton={showSuccessButton}
+            showFailureButton={showFailureButton}
+            onShowSuccessForm={() => {
+              setShowImageUpload(true);
+              setShowFailureReason(false);
+            }}
+            onShowFailureForm={() => {
+              setShowFailureReason(true);
+              setShowImageUpload(false);
+            }}
+            onClose={() => {
+              resetForms();
+              onClose();
+            }}
+          />
         )}
       </section>
     </div>
   );
 };
+
 export default ManagerOrderInformation;

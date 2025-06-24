@@ -1,14 +1,16 @@
 import { useState, useMemo, useCallback } from "react";
 import { useGetAvailableOrdersQuery, useCreateOrderStatusShipperMutation } from "../../redux/order/orderApi";
-import ManagerOrderInformation from "../informationOrder/manageInformation";
+import ManagerOrderInformation from "../../hooks/manageInformation";
 import { getBaseUrl } from "../../utils/baseUrl";
 import { useDispatch, useSelector } from "react-redux";
 import { startStatusUpdate, statusUpdateSuccess, statusUpdateFailed } from "../../redux/order/orderSlice";
 import { toast } from "react-toastify";
 import ShipperLoginPrompt from "../../hooks/ShipperLoginPrompt";
 import { useNavigate } from "react-router-dom";
-import OrderItem from "./OrderItem";
+import OrderItem from "../base/cart/OrderItem";
 import ProfileUpdateModal from "../../hooks/ProfileUpdateModal";
+import Pagination from "../base/common/Pagination";
+import SearchInput from "../base/common/SearchInput";
 
 const ORDERS_PER_PAGE = 20;
 
@@ -22,7 +24,9 @@ const Home = () => {
   const [showProfileUpdateModal, setShowProfileUpdateModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [missingFields, setMissingFields] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
   const dispatch = useDispatch();
+  
   const { 
     data, 
     isLoading, 
@@ -32,20 +36,26 @@ const Home = () => {
   } = useGetAvailableOrdersQuery({ page }, {
     skip: !currentShipper
   });
+  
   const [updateOrderStatus, { isLoading: isUpdating }] = useCreateOrderStatusShipperMutation();
+  
   const availableOrders = useMemo(() => data?.orders || [], [data]);
+  
+  const filteredOrders = useMemo(() => {
+    if (!searchTerm) return availableOrders;
+    const term = searchTerm.toLowerCase();
+    return availableOrders.filter(order => 
+      order.orderCode?.toLowerCase().includes(term) || 
+      `#${order._id?.slice(-6)?.toUpperCase()}`.includes(term)
+    );
+  }, [availableOrders, searchTerm]);
+
   const pagination = useMemo(() => ({
     currentPage: data?.currentPage || 1,
     totalPages: data?.totalPages || 1,
     totalOrders: data?.totalOrders || 0,
     ordersPerPage: data?.ordersPerPage || ORDERS_PER_PAGE
   }), [data]);
-
-  const showingFrom = useMemo(() => (page - 1) * pagination.ordersPerPage + 1, [page, pagination]);
-  const showingTo = useMemo(() => Math.min(
-    page * pagination.ordersPerPage,
-    pagination.totalOrders
-  ), [page, pagination]);
 
   const getProductImage = useCallback((image) => {
     if (!image) return "";
@@ -95,8 +105,13 @@ const Home = () => {
 
   const handleUpdateProfile = useCallback(() => {
     setShowProfileUpdateModal(false);
-    navigate('/profile');
+    navigate('/thong_tin');
   }, [navigate]);
+
+  const handleSearchChange = useCallback((e) => {
+    setSearchTerm(e.target.value);
+    setPage(1);
+  }, []);
 
   const handleConfirmOrders = async () => {
     if (selectedOrders.length === 0) {
@@ -154,16 +169,15 @@ const Home = () => {
   return (
     <div className="container-width mt-20 mb-4">
       <div className="bg-black text-line-one opacity-70 p-4 font-bold flex justify-between items-center">
-        <h2 className="text-xl text-white">Đơn hàng sẵn sàng giao</h2>
-        <div className="flex gap-4 items-center">
-          {pagination.totalOrders > 0 && (
-            <p className="text-white text-none">
-              Hiển thị {showingFrom}-{showingTo} trong tổng số {pagination.totalOrders} đơn hàng
-            </p>
-          )}
+        <h2 className="text-xl text-white">Sản phẩm cần giao</h2>
+        <div className="flex justify-end gap-4 w-1/2 items-center">
+          <SearchInput 
+            value={searchTerm}
+            onChange={handleSearchChange}
+          />
           <p 
             className={`cursor-pointer rounded-md transition ${
-              showCheckboxes 
+            showCheckboxes 
                 ? 'text-white hover:opacity-80' 
                 : 'text-white hover:opacity-80'
             }`}
@@ -188,13 +202,15 @@ const Home = () => {
                 </p>
                 <p className="text-gray-600 mt-1">Vui lòng thử lại sau</p>
               </div>
-            ) : availableOrders.length === 0 ? (
+            ) : filteredOrders.length === 0 ? (
               <div className="text-center py-8">
-                <h3 className="text-lg font-medium mb-1">Hiện không có đơn hàng nào sẵn sàng để nhận</h3>
+                <h3 className="text-lg font-medium mb-1">
+                  {searchTerm ? 'Không tìm thấy đơn hàng phù hợp' : 'Hiện không có đơn hàng nào sẵn sàng để nhận'}
+                </h3>
                 <p className="text-gray-600">Vui lòng kiểm tra lại sau</p>
               </div>
             ) : (
-              availableOrders.map((order) => (
+              filteredOrders.map((order) => (
                 <OrderItem 
                   key={order._id}
                   order={order}
@@ -209,7 +225,13 @@ const Home = () => {
           </section>
         </div>
       </div>
-      <div className="flex h-14 bg-black opacity-70 justify-between p-2 gap-2 items-center">
+      <Pagination
+        currentPage={page}
+        totalPages={pagination.totalPages}
+        onPageChange={handlePageChange}
+        showFromTo={false}
+        className={showCheckboxes && selectedOrders.length > 0 ? 'justify-between' : 'justify-end'}
+      >
         {showCheckboxes && selectedOrders.length > 0 && (
           <button 
             className={`bg-green-600 hover:bg-green-700 text-white font-bold px-4 py-2 rounded-md transition ${
@@ -221,34 +243,7 @@ const Home = () => {
             {isUpdating ? "ĐANG XỬ LÝ..." : "NHẬN GIAO HÀNG"} ({selectedOrders.length} đơn)
           </button>
         )}
-        
-        <span className="text-white flex-1 text-center">
-          Trang {page}/{pagination.totalPages}
-        </span>
-        {pagination.totalPages > 1 && (
-          <div className="flex gap-2">
-            <button
-              onClick={() => handlePageChange(page - 1)}
-              disabled={page === 1}
-              className={`bg-white font-bold shadow-md px-4 py-2 rounded-md hover:opacity-90 transition text-black ${
-                page === 1 ? 'opacity-50 cursor-not-allowed' : ''
-              }`}
-            >
-              Trang trước
-            </button>
-            <button
-              onClick={() => handlePageChange(page + 1)}
-              disabled={page === pagination.totalPages}
-              className={`bg-white font-bold shadow-md cursor-pointer px-4 py-2 rounded-md hover:opacity-90 transition text-black ${
-                page === pagination.totalPages ? 'opacity-50 cursor-not-allowed' : ''
-              }`}
-            >
-              Trang sau
-            </button>
-          </div>
-        )}
-      </div>
-
+      </Pagination>
       <ProfileUpdateModal 
         isOpen={showProfileUpdateModal}
         onClose={() => setShowProfileUpdateModal(false)}

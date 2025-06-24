@@ -144,7 +144,7 @@ const Login = () => {
 
         <p className="p-3">
           Bạn chưa có tài khoản? Ấn{" "}
-          <Link className="font-bold" to="/register">
+          <Link className="font-bold" to="/dang_ki">
             đăng ký
           </Link>{" "}
           để tạo tài khoản

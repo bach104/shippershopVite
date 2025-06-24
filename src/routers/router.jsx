@@ -3,9 +3,9 @@ import App from "../App"
 import Home from "../Page/Home/Home";
 import Login from "../components/Login";
 import Register from "../components/Register";
-import Profile from "../Page/informationAuth/Information";
-import Verifyofme from "../Page/verify/verifyofme"
-import VerifySuccess from "../Page/verifySuccess/verifySuccess"
+import Profile from "../Page/Auth/Information";
+import Verifyofme from "../Page/Home/verifyofme"
+import VerifySuccess from "../Page/Home/verifySuccess"
 const router = createBrowserRouter([
   {
     path: "/",
@@ -16,26 +16,26 @@ const router = createBrowserRouter([
             element:<Home/>
         },
         {
-            path: "/profile",
+            path: "/thong_tin",
             element: <Profile />,
         },
         {
-            path: "/delivery",
+            path: "/nhan_giao",
             element: <Verifyofme/>,
         },
         {
-            path: "/verifySuccess",
+            path: "/don_hang_da_giao",
             element: <VerifySuccess/>,
         },
     ],
 
     },
     {
-        path: "/login",
+        path: "/dang_nhap",
         element: <Login />,
     },
     {
-        path: "/register",
+        path: "/dang_ki",
         element: <Register />,
     },
 ]);

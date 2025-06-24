@@ -21,22 +21,17 @@ const Navbar = () => {
             </Link>
           </li>
           <li>
-            <Link className="hover:text-gray-400 transition" to="/delivery">
+            <Link className="hover:text-gray-400 transition" to="/nhan_giao">
               Nhận giao
             </Link>
           </li>
           <li>
-            <Link className="hover:text-gray-400 transition" to="/verifySuccess">
-              Giao thành công
+            <Link className="hover:text-gray-400 transition" to="/don_hang_da_giao">
+              Đơn hàng đã giao
             </Link>
           </li>
         </ul>
         <div className="flex items-center space-x-4">
-          <span>
-            <Link className="hover:text-gray-400 transition" to="/verifySuccess">
-              <Search className="w-5 h-5 cursor-pointer" />
-            </Link>
-          </span>
           <span>
             <Auth />
           </span>

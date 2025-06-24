@@ -18,6 +18,7 @@ const FeatureCard = ({ icon, color, title, description }) => (
     <p className="text-sm text-gray-600 pl-9">{description}</p>
   </div>
 );
+
 const ShipperLoginPrompt = () => {
   return (
     <div className="container-width mx-auto p-6 bg-white rounded-lg shadow-md mt-28 mb-20">
@@ -33,7 +34,7 @@ const ShipperLoginPrompt = () => {
             <span className="text-lg">Đăng nhập hệ thống</span>
           </div>
           <Link 
-            to="/login" 
+            to="/dang_nhap" 
             className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition"
           >
             Đăng nhập ngay
